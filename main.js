@@ -18,7 +18,7 @@ async function getOpeningPageGames (){
       url: "https://api.rawg.io/api/games",
       method: 'GET',
       data: {
-        'key': "cac5118079744913b2a5b9cc871b510a"
+        'key': rawgApi.key
       },
       success: getOpeningPageGamesSuccess,
       error: getOpeningPageGamesError,
@@ -64,7 +64,7 @@ async function getTrailer (name, imageArray){
     url: "https://www.googleapis.com/youtube/v3/search",
     method: 'GET',
     data: {
-      'key': "AIzaSyAlkCSOOQa7QkYOjN3F1l3o4591AJYV3qM",
+      'key': youtubeApi.key,
       'part': 'snippet',
       'maxResults': '1',
       'q': name + "trailer"
@@ -80,12 +80,6 @@ async function getTrailer (name, imageArray){
 function getTrailerSuccess(responseData, imageArray){
   console.log('trailer success');
   console.log('trailerResponseData', responseData);
-
-
-  // for(i = 0; i<responseData.results.length; i++){
-  //   let image = $("<img src=" + responseData.results[i].background_image + " class = poster name =" + responseData.results[i].slug +">")
-  //   $('#gameRow').append(image)
-  // }
 
 
   player = new YT.Player('player', {
