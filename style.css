@@ -1,0 +1,16 @@
+.poster{
+    vertical-align: middle;
+    border-style: none;
+    width: 22%;
+    height: max-content;
+    margin: 10;
+}
+
+#player{
+  float: right;
+}
+
+.short_screenshots{
+  width:25%;
+  margin:10;
+}
