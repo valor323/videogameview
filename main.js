@@ -35,8 +35,13 @@ function getOpeningPageGamesSuccess(responseData){
     for(k=0; k < responseData.results[i].short_screenshots.length; k++){
       imageArray.push(responseData.results[i].short_screenshots[k].image);
     }
+    let imageWrapper = $("<div></div>").addClass("imageWrapper");
     let image = $("<img src=" + responseData.results[i].background_image + " class = poster name =" + responseData.results[i].slug +">").data('imageArray', imageArray);
-    $('#gameRow').append(image)
+    let posterText = $("<p>"+ responseData.results[i].name + "</p>").addClass("posterText");
+    imageWrapper.append(image);
+    imageWrapper.append(posterText);
+    $('#gameRow').append(imageWrapper);
+    // $('#gameRow').append(posterText);
   }
   $(".poster").click(function(){
     console.log($(this).attr("name"));
@@ -48,6 +53,7 @@ function getOpeningPageGamesSuccess(responseData){
       $('#screenshots').append(screenshots);
     }
     getTrailer($(this).attr("name"), $(this).attr("imageArray"));
+    getGameDesacription($(this).attr("name"))
   });
 };
 
@@ -96,3 +102,41 @@ function getTrailerSuccess(responseData, imageArray){
 function getTrailerError(){
   console.log('trailer error');
 }
+
+async function getGameDesacription(name){
+  var getGameDescriptionParams = {
+    url: "https://api.rawg.io/api/games/" + name,
+    method: 'Get',
+    data: {
+      'key': rawgApi.key
+    },
+    success: getGameDescriptionSuccess,
+    error: getGameDescriptionError
+  }
+  await $.ajax( getGameDescriptionParams )
+};
+
+function getGameDescriptionSuccess(responseData){
+  console.log('gameDescription', responseData);
+
+  $("#description").append(responseData.description_raw)
+  let publisher = $("<p>Publisher:      </p>").addClass("info").append(responseData.publishers[0].name)
+  $("#publishers").append(publisher);
+  let esrbRating = $("<p>ESRB Rating:      </p>").addClass("info").append(responseData.esrb_rating.name)
+  $("#esrbRating").append(esrbRating);
+  let metacriticScore = $("<p>Metacritic Score:      </p>").addClass("info").append(responseData.metacritic + "%")
+  $("#metacriticScore").append(metacriticScore);
+  let playtime = $("<p>Playtime:      </p>").addClass("info").append(responseData.playtime + " Hours");
+  $("#playtime").append(playtime);
+  let released = $("<p>Released:      </p>").addClass("info").append(responseData.released);
+  $("#released").append(released);
+  let redditUrl = $("<p>Reddit URL:      </p>").addClass("info").append($("<a href =" + responseData.reddit_url + ">"+ responseData.name + " Reddit Page</a>"));
+  $("#redditUrl").append(redditUrl);
+  let website = $("<p>Game Website:      </p>").addClass("info").append($("<a href =" + responseData.website + ">"+ responseData.name + " Website</a>"));
+  $("#website").append(website);
+
+};
+
+function getGameDescriptionError(){
+  console.log('description error')
+};
