@@ -54,6 +54,7 @@ function getOpeningPageGamesSuccess(responseData){
     }
     getTrailer($(this).attr("name"), $(this).attr("imageArray"));
     getGameDesacription($(this).attr("name"))
+    getOtherGamesInSeries($(this).attr('name'));
   });
 };
 
@@ -120,23 +121,53 @@ function getGameDescriptionSuccess(responseData){
   console.log('gameDescription', responseData);
 
   $("#description").append(responseData.description_raw)
-  let publisher = $("<p>Publisher:      </p>").addClass("info").append(responseData.publishers[0].name)
-  $("#publishers").append(publisher);
-  let esrbRating = $("<p>ESRB Rating:      </p>").addClass("info").append(responseData.esrb_rating.name)
-  $("#esrbRating").append(esrbRating);
-  let metacriticScore = $("<p>Metacritic Score:      </p>").addClass("info").append(responseData.metacritic + "%")
-  $("#metacriticScore").append(metacriticScore);
-  let playtime = $("<p>Playtime:      </p>").addClass("info").append(responseData.playtime + " Hours");
-  $("#playtime").append(playtime);
-  let released = $("<p>Released:      </p>").addClass("info").append(responseData.released);
-  $("#released").append(released);
+  let publisher = $("<p>Publisher:      "+ responseData.publishers[0].name + "</p>").addClass("info")
+  $("#publishersAndOtherFacts").append(publisher);
+  let esrbRating = $("<p>ESRB Rating:      " + responseData.esrb_rating.name + "</p>").addClass("info")
+  $("#publishersAndOtherFacts").append(esrbRating);
+  let metacriticScore = $("<p>Metacritic Score:      " +  + responseData.metacritic + "%</p>").addClass("info")
+  $("#publishersAndOtherFacts").append(metacriticScore);
+  let playtime = $("<p>Playtime:      " + responseData.playtime + " Hours</p>").addClass("info");
+  $("#publishersAndOtherFacts").append(playtime);
+  let released = $("<p>Released:      " + responseData.released + "</p>").addClass("info");
+  $("#publishersAndOtherFacts").append(released);
   let redditUrl = $("<p>Reddit URL:      </p>").addClass("info").append($("<a href =" + responseData.reddit_url + ">"+ responseData.name + " Reddit Page</a>"));
-  $("#redditUrl").append(redditUrl);
+  $("#publishersAndOtherFacts").append(redditUrl);
   let website = $("<p>Game Website:      </p>").addClass("info").append($("<a href =" + responseData.website + ">"+ responseData.name + " Website</a>"));
-  $("#website").append(website);
+  $("#publishersAndOtherFacts").append(website);
 
 };
 
 function getGameDescriptionError(){
   console.log('description error')
 };
+
+
+async function getOtherGamesInSeries(name){
+  var getOtherGamesInSeriesParams = {
+    url: "https://api.rawg.io/api/games/"+ name +"/game-series",
+    method: 'Get',
+    data: {
+      'key': rawgApi.key
+    },
+    success: getOtherGamesInSeriesSuccess,
+    error: getOtherGamesInSeriesError
+  }
+  await $.ajax( getOtherGamesInSeriesParams )
+}
+
+function getOtherGamesInSeriesSuccess(responseData){
+  console.log('get other games', responseData)
+  for(i=0; i<responseData.results.length; i++){
+    let otherGameInSeriesWrapper = $("<div></div>").addClass("othergameInSeriesWrapper");
+    let othegamesInSeriesImage = $("<img src ="+ responseData.results[i].background_image +" class = otherGameInSeriesPoster name = "+ responseData.results[i].name + ">")
+    let otherGameInSeriesPosterText = $("<p>"+ responseData.results[i].name + "</p>").addClass("otherGameInSeriesPosterText");
+    otherGameInSeriesWrapper.append(othegamesInSeriesImage);
+    otherGameInSeriesWrapper.append(otherGameInSeriesPosterText);
+    $("#getOtherGamesInSeries").append(otherGameInSeriesWrapper);
+  }
+}
+
+function getOtherGamesInSeriesError(){
+  console.log('get other game error')
+}
