@@ -36,6 +36,7 @@
   width: 72%;
   position: relative;
   bottom: 44%;
+  min-height: 628.5px;
 }
 }
 
@@ -65,8 +66,9 @@
 #getOtherGamesInSeries{
   width: 61%;
   position: relative;
-  bottom: 81%;
+  bottom: 80%;
   display: inline-block;
+  min-height: 632.5px;
 }
 
 .otherGameInSeriesWrapper{
@@ -90,6 +92,16 @@
   width: 32%;
   margin: 5px;
   height: 35%;
+}
+
+.titleBreak{
+  font-size: 20px;
+}
+
+#otherGameTitle{
+  position: relative;
+  bottom: 78%;
+  left: 23%;
 }
 
 #publishers{
