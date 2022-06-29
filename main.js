@@ -88,7 +88,6 @@ function getTrailerSuccess(responseData, imageArray){
   console.log('trailer success');
   console.log('trailerResponseData', responseData);
 
-
   player = new YT.Player('player', {
     height: '390',
     width: '640',
@@ -97,7 +96,6 @@ function getTrailerSuccess(responseData, imageArray){
       'playsinline': 1
     },
   });
-
 }
 
 function getTrailerError(){
@@ -158,16 +156,64 @@ async function getOtherGamesInSeries(name){
 
 function getOtherGamesInSeriesSuccess(responseData){
   console.log('get other games', responseData)
-  for(i=0; i<responseData.results.length; i++){
-    let otherGameInSeriesWrapper = $("<div></div>").addClass("othergameInSeriesWrapper");
-    let othegamesInSeriesImage = $("<img src ="+ responseData.results[i].background_image +" class = otherGameInSeriesPoster name = "+ responseData.results[i].name + ">")
-    let otherGameInSeriesPosterText = $("<p>"+ responseData.results[i].name + "</p>").addClass("otherGameInSeriesPosterText");
-    otherGameInSeriesWrapper.append(othegamesInSeriesImage);
-    otherGameInSeriesWrapper.append(otherGameInSeriesPosterText);
-    $("#getOtherGamesInSeries").append(otherGameInSeriesWrapper);
+  $("#otherGameTitle").append($("<p>Other Games in Series</p>").addClass('titleBreak'))
+  let imageArray = [];
+  for(i = 0; i < responseData.results.length; i++) {
+    imageArray = [];
+  for(k=0; k<responseData.results[i].short_screenshots.length; k++){
+    imageArray.push(responseData.results[i].short_screenshots[k].image)
   }
+  let otherGameInSeriesWrapper = $("<div></div>").addClass("othergameInSeriesWrapper");
+  let othegamesInSeriesImage = $("<img src ="+ responseData.results[i].background_image +" class = otherGameInSeriesPoster name = "+ responseData.results[i].slug + ">").data('imageArray', imageArray)
+  let otherGameInSeriesPosterText = $("<p>"+ responseData.results[i].name + "</p>").addClass("otherGameInSeriesPosterText");
+  otherGameInSeriesWrapper.append(othegamesInSeriesImage);
+  otherGameInSeriesWrapper.append(otherGameInSeriesPosterText);
+  $("#getOtherGamesInSeries").append(otherGameInSeriesWrapper);
+  }
+  $(".otherGameInSeriesPoster").click(function(){
+    console.log($(this).attr("name"));
+    console.log('image array', $(this).data("imageArray"))
+    let screenshotArray = $(this).data("imageArray");
+    $('#screenshots').empty();
+    $('#description').empty();
+    $('#publishersAndOtherFacts').empty();
+    $("#otherGameTitle").empty();
+    $('#getOtherGamesInSeries').empty();
+    for(i=0; i< imageArray.length-1; i++){
+      let screenshots = $("<img class = short_screenshots src =" + screenshotArray[i] + ">")
+      $('#screenshots').append(screenshots);
+    }
+    getNewTrailer($(this).attr("name"), $(this).attr("imageArray"));
+    getGameDesacription($(this).attr("name"))
+    getOtherGamesInSeries($(this).attr('name'));
+  });
 }
 
 function getOtherGamesInSeriesError(){
   console.log('get other game error')
+}
+
+
+async function getNewTrailer(name, imageArray){
+  var getNewTrailerParams = {
+    url: "https://www.googleapis.com/youtube/v3/search",
+    method: 'GET',
+    data: {
+      'key': youtubeApi.key,
+      'part': 'snippet',
+      'maxResults': '1',
+      'q': name + "trailer"
+    },
+    success: getNewTrailerSuccess,
+    error: getNewTrailerError,
+  }
+  await $.ajax( getNewTrailerParams );
+}
+
+function getNewTrailerSuccess(responseData){
+  player.loadVideoById(""+ responseData.items[0].id.videoId + "")
+}
+
+function getNewTrailerError(){
+  console.log('get new trailer error');
 }
