@@ -2,11 +2,13 @@ $(document).ready(initializeApp);
 
 function initializeApp(){
   getOpeningPageGames();
+  searchBar();
 }
 
 //Global Variables
 
 var player;
+// var input = document.getElementById("searchBar").value
 var tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
       var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -216,4 +218,37 @@ function getNewTrailerSuccess(responseData){
 
 function getNewTrailerError(){
   console.log('get new trailer error');
+}
+
+
+function searchBar(){
+  $("#button").click(function(){
+    let value = $("#searchBar").val();
+    console.log(value)
+    searchGame(value)
+  })
+}
+
+async function searchGame(value){
+  var searchGameParams = {
+    url: "https://api.rawg.io/api/games",
+    method: 'Get',
+    data: {
+      'key': rawgApi.key,
+      "search": value,
+    },
+    success: searchGameSuccess,
+    error: searchGameError
+  }
+  await $.ajax( searchGameParams )
+}
+
+function searchGameSuccess(responseData){
+  console.log('searcGameData', responseData);
+  $("#gameRow").empty();
+  getOpeningPageGamesSuccess(responseData);
+}
+
+function searchGameError(){
+  console.log('searchGameError');
 }
