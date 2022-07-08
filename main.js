@@ -37,7 +37,7 @@ function getOpeningPageGamesSuccess(responseData){
     for(k=0; k < responseData.results[i].short_screenshots.length; k++){
       imageArray.push(responseData.results[i].short_screenshots[k].image);
     }
-    let imageWrapper = $("<div></div>").addClass("imageWrapper");
+    let imageWrapper = $("<div></div>").addClass("imageWrapper col-3");
     let image = $("<img src=" + responseData.results[i].background_image + " class = poster name =" + responseData.results[i].slug +">").data('imageArray', imageArray);
     let posterText = $("<p>"+ responseData.results[i].name + "</p>").addClass("posterText");
     imageWrapper.append(image);
@@ -165,12 +165,12 @@ function getOtherGamesInSeriesSuccess(responseData){
   for(k=0; k<responseData.results[i].short_screenshots.length; k++){
     imageArray.push(responseData.results[i].short_screenshots[k].image)
   }
-  let otherGameInSeriesWrapper = $("<div></div>").addClass("othergameInSeriesWrapper");
+  let otherGameInSeriesWrapper = $("<div></div>").addClass("othergameInSeriesWrapper col-3");
   let othegamesInSeriesImage = $("<img src ="+ responseData.results[i].background_image +" class = otherGameInSeriesPoster name = "+ responseData.results[i].slug + ">").data('imageArray', imageArray)
   let otherGameInSeriesPosterText = $("<p>"+ responseData.results[i].name + "</p>").addClass("otherGameInSeriesPosterText");
   otherGameInSeriesWrapper.append(othegamesInSeriesImage);
   otherGameInSeriesWrapper.append(otherGameInSeriesPosterText);
-  $("#getOtherGamesInSeries").append(otherGameInSeriesWrapper);
+  $("#getOtherGamesInSeriesRow").append(otherGameInSeriesWrapper);
   }
   $(".otherGameInSeriesPoster").click(function(){
     console.log($(this).attr("name"));
@@ -180,7 +180,7 @@ function getOtherGamesInSeriesSuccess(responseData){
     $('#description').empty();
     $('#publishersAndOtherFacts').empty();
     $("#otherGameTitle").empty();
-    $('#getOtherGamesInSeries').empty();
+    $('#getOtherGamesInSeriesRow').empty();
     for(i=0; i< imageArray.length-1; i++){
       let screenshots = $("<img class = short_screenshots src =" + screenshotArray[i] + ">")
       $('#screenshots').append(screenshots);
@@ -246,6 +246,12 @@ async function searchGame(value){
 function searchGameSuccess(responseData){
   console.log('searcGameData', responseData);
   $("#gameRow").empty();
+  $('#screenshots').empty();
+  $('#description').empty();
+  $('#publishersAndOtherFacts').empty();
+  $("#otherGameTitle").empty();
+  $('#getOtherGamesInSeriesRow').empty();
+  $('#player').css('display', 'none')
   getOpeningPageGamesSuccess(responseData);
 }
 
