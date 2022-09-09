@@ -1,6 +1,15 @@
+body {
+    background-color: black !important;
+}
+
+.websiteName{
+  display: inline-block;
+  color: red;
+}
+
 .videoGameContainer{
   width: 100%;
-  height: 100%
+  height: 100%;
 }
 
 .poster{
@@ -28,7 +37,8 @@
 
 #description{
   position: relative;
-top: 15px;
+  top: 15px;
+  color: white;
   /* width: 33%;
   position: relative;
   bottom: 68%;
@@ -49,22 +59,34 @@ top: 15px;
 }
 
 .info{
-  /* font-size: 25px;
-  position: relative;
-  top: 8%; */
+  color: white;
 }
 
 .imageWrapper{
   display: inline-block;
 }
 
+
+
 .posterText{
-  color: white;
-    -webkit-text-stroke: 1px black;
-    font-size: 25px;
+    color: white;
+    /* -webkit-text-stroke: 1px black; */
+    font-size: 2vw;
     position: absolute;
-    bottom: 7%;
-    left: 27%;
+    bottom: 24%;
+    left: 18%;
+    visibility: hidden;
+    opacity: 0;
+    transition: .5s ease;
+}
+
+.imageWrapper:hover .poster {
+  opacity: 0.5;
+}
+
+.imageWrapper:hover .posterText {
+  visibility: visible;
+  opacity: 1;
 }
 
 #getOtherGamesInSeries{
@@ -87,11 +109,14 @@ top: 15px;
 
 .otherGameInSeriesPosterText{
   color: white;
-    -webkit-text-stroke: 1px black;
-    font-size: 25px;
+    /* -webkit-text-stroke: 1px black; */
+    font-size: 2vw;
     position: absolute;
     bottom: 15%;
     left: 23%;
+    visibility: hidden;
+    opacity: 0;
+    transition: .5s ease;
 }
 
 .otherGameInSeriesPoster{
@@ -105,8 +130,19 @@ top: 15px;
     margin-bottom: 1%;
 }
 
+.otherGameInSeriesWrapper:hover .otherGameInSeriesPoster {
+  opacity: 0.5;
+}
+
+.otherGameInSeriesWrapper:hover .otherGameInSeriesPosterText {
+  visibility: visible;
+  opacity: 1;
+}
+
+
 .titleBreak{
   font-size: 20px;
+  color: white;
 }
 
 #otherGameTitle{
@@ -117,32 +153,54 @@ top: 15px;
 
 #publishers{
   display: inline-block;
+  color: white;
 }
 
 #esrbRating{
   display: inline-block;
+  color: white;
 }
 
 #metacriticScore{
   display: inline-block;
+  color: white;
 }
 
 #playtime{
   display: inline-block;
+  color: white;
 }
 
 #released{
   display: inline-block;
+  color: white;
 }
 
 #redditUrl{
   display: inline-block;
+  color: white;
 }
 
 #website{
   display: inline-block;
+  color: white;
 }
 
 #publishersAndOtherFacts{
   margin-top: 20px;
+  color: white;
+}
+
+#searchBar {
+  width: 30%;
+  left: 10%;
+  position: relative;
+}
+
+#button {
+  position: relative;
+  left: 10%;
+  width: 8%;
+  background-color: white;
+  margin-top: 2%;
 }
