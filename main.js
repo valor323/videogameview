@@ -6,7 +6,7 @@ function initializeApp(){
 }
 
 //Global Variables
-
+var videoPlayerThere = false;
 var player;
 // var input = document.getElementById("searchBar").value
 var tag = document.createElement('script');
@@ -65,7 +65,7 @@ function getOpeningPageGamesError(){
 }
 
 async function getTrailer (name, imageArray){
-
+  videoPlayerThere = true;
   console.log('getTrailer id', name);
   console.log('imageArray2', imageArray);
 
@@ -89,6 +89,7 @@ async function getTrailer (name, imageArray){
 function getTrailerSuccess(responseData, imageArray){
   console.log('trailer success');
   console.log('trailerResponseData', responseData);
+  $('#player').css('display', 'inline-block')
 
   player = new YT.Player('player', {
     height: '390',
@@ -119,22 +120,68 @@ async function getGameDesacription(name){
 
 function getGameDescriptionSuccess(responseData){
   console.log('gameDescription', responseData);
+  if(responseData.description_raw){
+    $("#description").append(responseData.description_raw)
+  }else{
+    let summary = $("<p>No Description Available</p>").addClass("info")
+    $('#description').append(summary)
+  }
 
-  $("#description").append(responseData.description_raw)
-  let publisher = $("<p>Publisher:      "+ responseData.publishers[0].name + "</p>").addClass("info")
-  $("#publishersAndOtherFacts").append(publisher);
-  let esrbRating = $("<p>ESRB Rating:      " + responseData.esrb_rating.name + "</p>").addClass("info")
-  $("#publishersAndOtherFacts").append(esrbRating);
-  let metacriticScore = $("<p>Metacritic Score:      " +  + responseData.metacritic + "%</p>").addClass("info")
-  $("#publishersAndOtherFacts").append(metacriticScore);
-  let playtime = $("<p>Playtime:      " + responseData.playtime + " Hours</p>").addClass("info");
-  $("#publishersAndOtherFacts").append(playtime);
-  let released = $("<p>Released:      " + responseData.released + "</p>").addClass("info");
-  $("#publishersAndOtherFacts").append(released);
-  let redditUrl = $("<p>Reddit URL:      </p>").addClass("info").append($("<a href =" + responseData.reddit_url + ">"+ responseData.name + " Reddit Page</a>"));
-  $("#publishersAndOtherFacts").append(redditUrl);
-  let website = $("<p>Game Website:      </p>").addClass("info").append($("<a href =" + responseData.website + ">"+ responseData.name + " Website</a>"));
-  $("#publishersAndOtherFacts").append(website);
+  if(responseData.publishers[0]){
+    let publisher = $("<p>Publisher:      "+ responseData.publishers[0].name + "</p>").addClass("info")
+    $("#publishersAndOtherFacts").append(publisher);
+  }else{
+    let publisher = $("<p>Publisher:      No Information Available</p>").addClass("info")
+      $("#publishersAndOtherFacts").append(publisher);
+  }
+
+  if(responseData.esrb_rating){
+    let esrbRating = $("<p>ESRB Rating:      " + responseData.esrb_rating.name + "</p>").addClass("info")
+    $("#publishersAndOtherFacts").append(esrbRating);
+  }else{
+    let esrbRating = $("<p>ESRB Rating:      No Information Available</p>").addClass("info")
+    $("#publishersAndOtherFacts").append(esrbRating);
+  }
+
+  if(responseData.metacritic){
+    let metacriticScore = $("<p>Metacritic Score:      " +  + responseData.metacritic + "%</p>").addClass("info")
+    $("#publishersAndOtherFacts").append(metacriticScore);
+  }else{
+    let metacriticScore = $("<p>Metacritic Score:      No Information Available</p>").addClass("info")
+    $("#publishersAndOtherFacts").append(metacriticScore);
+  }
+
+  if(responseData.playtime){
+    let playtime = $("<p>Playtime:      " + responseData.playtime + " Hours</p>").addClass("info");
+      $("#publishersAndOtherFacts").append(playtime);
+  }else{
+    let playtime = $("<p>Playtime:      No Information Available</p>").addClass("info")
+      $("#publishersAndOtherFacts").append(playtime);
+  }
+
+  if(responseData.released){
+    let released = $("<p>Released:      " + responseData.released + "</p>").addClass("info");
+    $("#publishersAndOtherFacts").append(released);
+  }else{
+    let released = $("<p>Released:      No Information Available</p>").addClass("info")
+      $("#publishersAndOtherFacts").append(released);
+  }
+
+  if(responseData.reddit_url){
+    let redditUrl = $("<p>Reddit URL:      </p>").addClass("info").append($("<a href =" + responseData.reddit_url + ">"+ responseData.name + " Reddit Page</a>"));
+    $("#publishersAndOtherFacts").append(redditUrl);
+  }else{
+    let redditUrl = $("<p>Reddit URL:      No Information Available</p>").addClass("info")
+      $("#publishersAndOtherFacts").append(redditUrl);
+  }
+
+  if(responseData.website){
+    let website = $("<p>Game Website:      </p>").addClass("info").append($("<a href =" + responseData.website + ">"+ responseData.name + " Website</a>"));
+    $("#publishersAndOtherFacts").append(website);
+  }else{
+    let website = $("<p>Game Website:      No Information Available</p>").addClass("info")
+      $("#publishersAndOtherFacts").append(website);
+  }
 
 };
 
@@ -213,6 +260,7 @@ async function getNewTrailer(name, imageArray){
 }
 
 function getNewTrailerSuccess(responseData){
+$('#player').css('display', 'inline-block')
   player.loadVideoById(""+ responseData.items[0].id.videoId + "")
 }
 
@@ -229,21 +277,80 @@ function searchBar(){
   })
 }
 
-async function searchGame(value){
-  var searchGameParams = {
-    url: "https://api.rawg.io/api/games",
-    method: 'Get',
-    data: {
-      'key': rawgApi.key,
-      "search": value,
-    },
-    success: searchGameSuccess,
-    error: searchGameError
+function SearchGameInDepth(responseData){
+  console.log('success');
+  console.log('responseData', responseData);
+  let imageArray = [];
+  for(i = 0; i<responseData.results.length; i++){
+    imageArray=[];
+    for(k=0; k < responseData.results[i].short_screenshots.length; k++){
+      imageArray.push(responseData.results[i].short_screenshots[k].image);
+    }
+    let imageWrapper = $("<div></div>").addClass("imageWrapper col-3");
+    let image = $("<img src=" + responseData.results[i].background_image + " class = poster name =" + responseData.results[i].slug +">").data('imageArray', imageArray);
+    let posterText = $("<p>"+ responseData.results[i].name + "</p>").addClass("posterText");
+    imageWrapper.append(image);
+    imageWrapper.append(posterText);
+    $('#gameRow').append(imageWrapper);
+    // $('#gameRow').append(posterText);
   }
-  await $.ajax( searchGameParams )
+  $(".poster").click(function(){
+    console.log($(this).attr("name"));
+    console.log('image array', $(this).data("imageArray"))
+    let screenshotArray = $(this).data("imageArray");
+    $('#gameRow').empty();
+    for(i=0; i< imageArray.length-1; i++){
+      let screenshots = $("<img class = short_screenshots src =" + screenshotArray[i] + ">")
+      $('#screenshots').append(screenshots);
+    }
+    getNewTrailer($(this).attr("name"), $(this).attr("imageArray"));
+    getGameDesacription($(this).attr("name"))
+    getOtherGamesInSeries($(this).attr('name'));
+  });
+};
+
+async function searchGame(value){
+  debugger;
+  if(videoPlayerThere === true){
+    var searchGameParams = {
+      url: "https://api.rawg.io/api/games",
+      method: 'Get',
+      data: {
+        'key': rawgApi.key,
+        "search": value,
+      },
+      success: searchGameSuccess,
+      error: searchGameError
+    }
+    await $.ajax( searchGameParams )
+  }else{
+    var searchGameParams = {
+      url: "https://api.rawg.io/api/games",
+      method: 'Get',
+      data: {
+        'key': rawgApi.key,
+        "search": value,
+      },
+      success: searchGameSuccessNoPreviousVideo,
+      error: searchGameError
+    }
+    await $.ajax( searchGameParams )
+  }
 }
 
 function searchGameSuccess(responseData){
+  console.log('searcGameData', responseData);
+  $("#gameRow").empty();
+  $('#screenshots').empty();
+  $('#description').empty();
+  $('#publishersAndOtherFacts').empty();
+  $("#otherGameTitle").empty();
+  $('#getOtherGamesInSeriesRow').empty();
+  $('#player').css('display', 'none')
+  SearchGameInDepth(responseData);
+}
+
+function searchGameSuccessNoPreviousVideo(responseData){
   console.log('searcGameData', responseData);
   $("#gameRow").empty();
   $('#screenshots').empty();
